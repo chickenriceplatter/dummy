@@ -4,7 +4,7 @@ working_directory "/var/app/dummy/current"
 
 # Unicorn PID file location
 # pid "/path/to/pids/unicorn.pid"
-pid "/var/app/dummy/tmp/pids/unicorn.pid"
+pid "/var/run/unicorn.pid"
 
 # Path to logs
 # stderr_path "/path/to/log/unicorn.log"
