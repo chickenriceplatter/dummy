@@ -3,6 +3,4 @@ production:
   database: dummy
   username: deploy
   password: password
-  host: localhost
   port: 5432
-  reconnect: true
