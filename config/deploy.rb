@@ -2,7 +2,7 @@ require 'mina/bundler'
 require 'mina/rails'
 require 'mina/git'
 # require 'mina/rbenv'  # for rbenv support. (http://rbenv.org)
-# require 'mina/rvm'    # for rvm support. (http://rvm.io)
+require 'mina/rvm'    # for rvm support. (http://rvm.io)
 
 # Basic settings:
 #   domain       - The hostname to SSH to.
@@ -17,7 +17,7 @@ set :repository, 'git@github.com:chickenriceplatter/dummy.git'
 set :branch, 'master'
 
 # For system-wide RVM install.
-#   set :rvm_path, '/usr/local/rvm/bin/rvm'
+set :rvm_path, '/usr/local/rvm/bin/rvm'
 
 # Manually create these paths in shared/ (eg: shared/config/database.yml) in your server.
 # They will be linked in the 'deploy:link_shared_paths' step.
@@ -36,7 +36,7 @@ task :environment do
   # invoke :'rbenv:load'
 
   # For those using RVM, use this to load an RVM version@gemset.
-  # invoke :'rvm:use[ruby-1.9.3-p125@default]'
+  invoke :'rvm:use[ruby-2.2.1@default]'
 end
 
 # Put any custom mkdir's in here for when `mina setup` is ran.
@@ -69,6 +69,7 @@ task :deploy => :environment do
     invoke :'deploy:cleanup'
 
     to :launch do
+      invoke :'db:seed'
       queue "mkdir -p #{deploy_to}/#{current_path}/tmp/"
       queue "touch #{deploy_to}/#{current_path}/tmp/restart.txt"
     end
@@ -81,4 +82,16 @@ end
 #  - http://nadarei.co/mina/tasks
 #  - http://nadarei.co/mina/settings
 #  - http://nadarei.co/mina/helpers
+
+namespace :db do
+
+  desc "seed the seed table"
+  task :seed do
+    queue %{
+      echo "-----> Seeding/ updating seed tables"
+      #{echo_cmd %[cd #{deploy_to!}/#{current_path!} ; RAILS_ENV=production bundle exec rake db:seed]}
+    }
+  end
+
+end
 
