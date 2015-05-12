@@ -9,8 +9,8 @@ pid "/var/run/unicorn.pid"
 # Path to logs
 # stderr_path "/path/to/log/unicorn.log"
 # stdout_path "/path/to/log/unicorn.log"
-stderr_path "/var/app/dummy/log/unicorn.stderr.log"
-stdout_path "/var/app/dummy/log/unicorn.stdout.log"
+stderr_path "/var/app/dummy/shared/log/unicorn.stderr.log"
+stdout_path "/var/app/dummy/shared/log/unicorn.stdout.log"
 
 # Unicorn socket
 listen "/var/run/unicorn.todo.sock"
