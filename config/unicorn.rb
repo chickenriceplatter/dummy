@@ -1,19 +1,19 @@
 # Set the working application directory
 # working_directory "/path/to/your/app"
-working_directory "/var/app/dummy/current"
+working_directory "/data/dummy/current"
 
 # Unicorn PID file location
-# pid "/path/to/pids/unicorn.pid"
-pid "/var/run/unicorn.pid"
+# pid "/var/run/engineyard/unicorn_cdc.pid"
+pid "/var/run/deploy/unicorn.pid"
 
 # Path to logs
 # stderr_path "/path/to/log/unicorn.log"
 # stdout_path "/path/to/log/unicorn.log"
-stderr_path "/var/app/dummy/shared/log/unicorn.stderr.log"
-stdout_path "/var/app/dummy/shared/log/unicorn.stdout.log"
+stderr_path "/data/dummy/shared/log/unicorn.stderr.log"
+stdout_path "/data/dummy/shared/log/unicorn.stdout.log"
 
 # Unicorn socket
-listen "/var/run/unicorn.todo.sock"
+listen "/var/run/deploy/unicorn.todo.sock"
 
 # Number of processes
 # worker_processes 4
