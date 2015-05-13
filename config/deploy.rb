@@ -65,7 +65,7 @@ task :deploy => :environment do
     invoke :'deploy:link_shared_paths'
     invoke :'bundle:install'
     # invoke :'rails:db_migrate'
-    invoke :'rails:assets_precompile'
+    # invoke :'rails:assets_precompile'
     invoke :'deploy:cleanup'
 
     to :launch do
@@ -91,7 +91,7 @@ namespace :db do
   task :config do
     queue %{
       echo "-----> configuring database.yml"
-      #{echo_cmd %[cp #{deploy_to!}/#{current_path!}/config/database.yml.production #{deploy_to!}/shared/config/database.yml}
+      #{echo_cmd %[cp #{deploy_to!}/#{current_path!}/config/database.yml.production #{deploy_to!}/shared/config/database.yml]}
     }
   end
 
