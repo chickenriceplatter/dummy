@@ -12,7 +12,7 @@ require 'mina/rvm'    # for rvm support. (http://rvm.io)
 
 set :user, 'deploy'
 set :domain, '192.168.33.10'
-set :deploy_to, '/data/dummy'
+set :deploy_to, '/data/dummy/'
 set :repository, 'git@github.com:chickenriceplatter/dummy.git'
 set :branch, 'master'
 
@@ -69,6 +69,7 @@ task :deploy => :environment do
     invoke :'deploy:cleanup'
 
     to :launch do
+      invoke :'db:config'
       invoke :'db:migrate'
       invoke :'db:seed'
       queue "mkdir -p #{deploy_to}/#{current_path}/tmp/"
@@ -85,6 +86,14 @@ end
 #  - http://nadarei.co/mina/helpers
 
 namespace :db do
+
+  desc "config database.yml"
+  task :config do
+    queue %{
+      echo "-----> configuring database.yml"
+      #{echo_cmd %[cp #{deploy_to!}/#{current_path!}/config/database.yml.production #{deploy_to!}/shared/config/database.yml}
+    }
+  end
 
   desc "run migrations"
   task :migrate do
