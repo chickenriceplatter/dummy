@@ -3,6 +3,7 @@ require 'mina/rails'
 require 'mina/git'
 # require 'mina/rbenv'  # for rbenv support. (http://rbenv.org)
 require 'mina/rvm'    # for rvm support. (http://rvm.io)
+require 'mina/unicorn'
 
 # Basic settings:
 #   domain       - The hostname to SSH to.
@@ -12,7 +13,7 @@ require 'mina/rvm'    # for rvm support. (http://rvm.io)
 
 set :user, 'deploy'
 set :domain, '192.168.33.10'
-set :deploy_to, '/data/dummy/'
+set :deploy_to, '/data/dummy'
 set :repository, 'git@github.com:chickenriceplatter/dummy.git'
 set :branch, 'master'
 
@@ -21,7 +22,9 @@ set :rvm_path, '/home/deploy/.rvm/bin/rvm'
 
 # Manually create these paths in shared/ (eg: shared/config/database.yml) in your server.
 # They will be linked in the 'deploy:link_shared_paths' step.
-set :shared_paths, ['config/database.yml', 'log']
+set :shared_paths, ['config/database.yml', 'log', 'tmp/sockets', 'tmp/pids']
+
+set :unicorn_pid, '/var/run/deploy/unicorn.pid'
 
 # Optional settings:
 #   set :user, 'foobar'    # Username in the server to SSH to.
@@ -63,17 +66,18 @@ task :deploy => :environment do
     # instance of your project.
     invoke :'git:clone'
     invoke :'deploy:link_shared_paths'
+    invoke :'install:bundler'
     invoke :'bundle:install'
     # invoke :'rails:db_migrate'
-    # invoke :'rails:assets_precompile'
+    invoke :'rails:assets_precompile'
     invoke :'deploy:cleanup'
 
     to :launch do
-      invoke :'db:config'
       invoke :'db:migrate'
       invoke :'db:seed'
       queue "mkdir -p #{deploy_to}/#{current_path}/tmp/"
       queue "touch #{deploy_to}/#{current_path}/tmp/restart.txt"
+      invoke :'start:unicorn'
     end
   end
 end
@@ -85,15 +89,29 @@ end
 #  - http://nadarei.co/mina/settings
 #  - http://nadarei.co/mina/helpers
 
-namespace :db do
-
-  desc "config database.yml"
-  task :config do
+namespace :start do
+  desc "start unicorn"
+  task :unicorn do
     queue %{
-      echo "-----> configuring database.yml"
-      #{echo_cmd %[cp #{deploy_to!}/#{current_path!}/config/database.yml.production #{deploy_to!}/shared/config/database.yml]}
+      echo "-----> starting unicorn"
+      #{echo_cmd %[cd #{deploy_to!}/#{current_path!} ; bundle exec unicorn -c config/unicorn.rb -D]}
     }
   end
+end
+
+namespace :install do
+
+  desc "install bundler"
+  task :bundler do
+    queue %{
+      echo "-----> install bundler"
+      #{echo_cmd %[gem install bundler]}
+    }
+  end
+
+end
+
+namespace :db do
 
   desc "run migrations"
   task :migrate do
