@@ -1,6 +1,6 @@
 # Set the working application directory
 # working_directory "/path/to/your/app"
-working_directory "/home/deploy/dummy/current"
+working_directory "/home/deploy/app/dummy/current"
 
 # Unicorn PID file location
 # pid "/var/run/engineyard/unicorn_cdc.pid"
