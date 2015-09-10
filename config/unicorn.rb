@@ -4,7 +4,7 @@ working_directory "/home/deploy/app/dummy/current"
 
 # Unicorn PID file location
 # pid "/var/run/engineyard/unicorn_cdc.pid"
-pid "/var/run/ec2/unicorn.pid"
+pid "/var/run/ec2/dummy_unicorn.pid"
 
 # Path to logs
 # stderr_path "/path/to/log/unicorn.log"
