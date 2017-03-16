@@ -12,8 +12,9 @@ require 'mina/unicorn'
 #   branch       - Branch name to deploy. (needed by mina/git)
 
 set :user, 'deploy'
-set :domain, '192.168.33.10'
-set :deploy_to, '/data/dummy'
+# set :domain, '192.168.33.10'
+set :domain, 'ubuntu'
+set :deploy_to, '/home/deploy/app/dummy'
 set :repository, 'git@github.com:chickenriceplatter/dummy.git'
 set :branch, 'master'
 
@@ -22,9 +23,9 @@ set :rvm_path, '/home/deploy/.rvm/bin/rvm'
 
 # Manually create these paths in shared/ (eg: shared/config/database.yml) in your server.
 # They will be linked in the 'deploy:link_shared_paths' step.
-set :shared_paths, ['config/database.yml', 'log', 'tmp/sockets', 'tmp/pids']
+set :shared_paths, ['config/database.yml', 'log']
 
-set :unicorn_pid, '/var/run/deploy/unicorn.pid'
+set :unicorn_pid, '/home/deploy/pids/dummy_unicorn.pid'
 
 # Optional settings:
 #   set :user, 'foobar'    # Username in the server to SSH to.
@@ -66,9 +67,9 @@ task :deploy => :environment do
     # instance of your project.
     invoke :'git:clone'
     invoke :'deploy:link_shared_paths'
-    invoke :'install:bundler'
+    # invoke :'install:bundler'
     invoke :'bundle:install'
-    # invoke :'rails:db_migrate'
+    invoke :'rails:db_migrate'
     invoke :'rails:assets_precompile'
     invoke :'deploy:cleanup'
 
